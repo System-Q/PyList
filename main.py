@@ -36,6 +36,27 @@ def heading(top_text: str, bottom_text: str):
 def new_list():
     heading("Create a new list", "Give your list a name")
 
+    list_name = input(prompt)
+
+    with open(f"{lists_path}/{list_name}", "a") as new_list:
+
+        add_stuff = True
+        while add_stuff == True:
+            print("Add an item to the list, or type 'q' to exit to main menu")
+
+            usr_item = input(prompt)
+            if usr_item == "q"
+
+                break
+
+            else:
+
+                new_list.write(usr_item)
+                return
+
+
+
+
 
 def view_lists():
     heading("View a List", "Select a list to view")
