@@ -1,6 +1,7 @@
 import os
 
 lists_path = "lists"
+pre_prompt = "\nMake a selection, or type ':q' to go back or exit"
 prompt = ">>>> "
 
 
@@ -34,70 +35,134 @@ def heading(top_text: str, bottom_text: str):
 
 
 def new_list():
-    heading("Create a new list", "Give your list a name")
+    while True:
+        heading("Create a new list", "Give your list a name")
 
-    list_name = input(prompt)
+        invalid_ins = [
+            "",
+            " ",
+        ]
 
-    with open(f"{lists_path}/{list_name}", "a") as new_list:
+        print(pre_prompt)
+        list_name = input(prompt)
 
-        add_stuff = True
-        while add_stuff == True:
-            print("Add an item to the list, or type 'q' to exit to main menu")
+        if list_name == ":q":
+            welcome_screen()
 
-            usr_item = input(prompt)
-            if usr_item == "q"
+        while list_name in invalid_ins:
+            print("Field cannot be blank.")
+            list_name = input(prompt)
 
-                break
+        with open(f"{lists_path}/{list_name}", "a") as new_list:
+            while True:
+                print("Add an item to the list, or type 'q' to exit to main menu")
 
-            else:
+                usr_item = input(prompt)
+                if usr_item == ":q":
+                    break
 
-                new_list.write(usr_item)
-                return
-
-
-
+                else:
+                    new_list.write(f"{usr_item}\n")
 
 
 def view_lists():
-    heading("View a List", "Select a list to view")
+    while True:
+        heading("View a List", "Select a list to view")
 
-    usr_lists = os.listdir(lists_path)
-    file_count = 0
+        usr_lists = os.listdir(lists_path)
+        file_count = 0
 
-    for files in usr_lists:
-        file_count += 1
-        print(f"{file_count} {files}")
+        for files in usr_lists:
+            file_count += 1
+            print(f"{file_count}: {files}")
 
-    print(f"{file_count + 1} Main Menu\n")
+        print(pre_prompt)
+        usr_choice = input(prompt)
 
-    usr_choice = input(prompt)
-    if usr_choice in usr_lists:
-        with open(f"{lists_path}/{usr_choice}", "r") as listicle:
-            listicle = listicle.read()
-            print(listicle)
+        if usr_choice == ":q":
+            welcome_screen()
 
-    elif int(usr_choice) == file_count + 1:
-        welcome_screen()
+        while usr_choice not in usr_lists:
+            print("Invalid option. Please enter a valid file name")
+            usr_choice = input(prompt)
 
-    else:
-        print("Error, file not found")
-        return
+        while usr_choice in usr_lists:
+            with open(f"{lists_path}/{usr_choice}", "r") as listicle:
+                listicle = listicle.read()
+                print("\n" + listicle)
+
+            print(f"View another list? {pre_prompt}")
+            usr_choice = input(prompt)
+            if usr_choice == ":q":
+                break
+
+
+def delete_list():
+    while True:
+        heading("Delete a List", "Select a list to delete")
+
+        usr_lists = os.listdir(lists_path)
+        file_count = 0
+
+        for files in usr_lists:
+            file_count += 1
+            print(f"{file_count}: {files}")
+
+        print(pre_prompt)
+        usr_choice = input(prompt)
+
+        if usr_choice == ":q":
+            welcome_screen()
+
+        while usr_choice not in usr_lists:
+            print("Invalid option. Please enter a valid file name")
+            usr_choice = input(prompt)
+
+        while usr_choice in usr_lists:
+            os.system(f"rm {lists_path}/{usr_choice}")
+
+            print(f"Delete another list? {pre_prompt}")
+            usr_choice = input(prompt)
+            if usr_choice == ":q":
+                break
 
 
 def welcome_screen():
-    heading("Welcome to PyList", "Bottom Text")
+    heading("Welcome to PyList", "Written by System-Q")
 
-    print("Please make a selection:\n")
-    print("1: Create a new list")
-    print("2: Edit a list")
-    print("3: View a list")
-    print("4: Delete a list\n")
+    usr_options = {
+        "1": "Create a new list",
+        "2": "View a list",
+        "3": "Edit a list",
+        "4": "Delete a list",
+    }
 
+    print("Main Menu\n")
+    for key, value in usr_options.items():
+        print(f"{key}: {value}")
+
+    print(pre_prompt)
     usr_choice = input(prompt)
     print(usr_choice)
 
-    if int(usr_choice) == 3:
+    if usr_choice == ":q":
+        quit()
+
+    while usr_choice not in usr_options.keys():
+        print("Invalid option. Please select a valid option")
+        usr_choice = input(prompt)
+
+    if int(usr_choice) == 1:
+        new_list()
+
+    if int(usr_choice) == 2:
         view_lists()
+
+    if int(usr_choice) == 4:
+        delete_list()
+
+    if usr_choice == ":q":
+        quit()
 
 
 welcome_screen()
